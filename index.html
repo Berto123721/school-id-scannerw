@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR ID Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+  <h2>Scan Student ID</h2>
+  <div id="reader" style="width: 300px;"></div>
+
+  <script>
+    function onScanSuccess(qrCodeMessage) {
+      alert("Scanned ID: " + qrCodeMessage);
+
+      fetch("send_sms.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ student_id: qrCodeMessage })
+      })
+      .then(response => response.text())
+      .then(data => alert(data))
+      .catch(error => alert("Error: " + error));
+    }
+
+    const html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    );
+  </script>
+</body>
+</html>
